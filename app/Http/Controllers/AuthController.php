@@ -65,12 +65,23 @@ class AuthController extends Controller
     {
         $credentials = $request->only('email', 'password');
 
+        // ✅ Check if the email exists
+        $user = User::where('email', $request->email)->first();
+
+        if (!$user) {
+            return back()->withErrors([
+                'email' => 'This email is not registered. Please create an account first.'
+            ])->withInput();
+        }
+
+        // ✅ Attempt login
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
             return redirect()->route('dashboard');
         }
 
-        return back()->withErrors(['email' => 'Invalid credentials.']);
+        // ✅ If password is wrong
+        return back()->withErrors(['email' => 'Invalid credentials.'])->withInput();
     }
 
     // Handle logout
