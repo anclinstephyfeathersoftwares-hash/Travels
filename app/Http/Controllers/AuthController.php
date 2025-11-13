@@ -27,7 +27,24 @@ class AuthController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
-            'password' => 'required|string|min:6|confirmed',
+            'password' => [
+                'required',
+                'string',
+                'min:5', // Minimum 5 characters
+                'confirmed',
+                'regex:/[A-Z]/',   // Must contain at least one uppercase letter
+                'regex:/[\W_]/',   // Must contain at least one special character
+                function ($attribute, $value, $fail) use ($request) {
+                    if (stripos($value, $request->name) !== false) {
+                        $fail('Password should not contain your name.');
+                    }
+                },
+            ],
+        ], [
+            'password.min' => 'Password must be at least 5 characters long.',
+            'password.regex' => 'Password must contain at least one uppercase letter and one special symbol.',
+            'email.unique' => 'This email ID is already registered.',
+            'password.confirmed' => 'Password confirmation does not match.',
         ]);
 
         // ✅ Create user and insert into DB
