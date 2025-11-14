@@ -34,11 +34,6 @@ class AuthController extends Controller
                 'confirmed',
                 'regex:/[A-Z]/',   // Must contain at least one uppercase letter
                 'regex:/[\W_]/',   // Must contain at least one special character
-                function ($attribute, $value, $fail) use ($request) {
-                    if (stripos($value, $request->name) !== false) {
-                        $fail('Password should not contain your name.');
-                    }
-                },
             ],
         ], [
             'password.min' => 'Password must be at least 5 characters long.',

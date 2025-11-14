@@ -171,7 +171,6 @@
           <li id="length" class="invalid">At least 5 characters</li>
           <li id="uppercase" class="invalid">At least one uppercase letter (A–Z)</li>
           <li id="symbol" class="invalid">At least one special symbol (!, @, #, $, etc.)</li>
-          <li id="noName" class="invalid">Should not contain your name</li>
         </ul>
       </div>
 
@@ -200,7 +199,6 @@ document.addEventListener('DOMContentLoaded', function() {
     length: document.getElementById('length'),
     uppercase: document.getElementById('uppercase'),
     symbol: document.getElementById('symbol'),
-    noName: document.getElementById('noName')
   };
 
   password.addEventListener('input', validatePassword);
@@ -219,7 +217,6 @@ document.addEventListener('DOMContentLoaded', function() {
     toggleRule(rules.length, val.length >= 5);
     toggleRule(rules.uppercase, /[A-Z]/.test(val));
     toggleRule(rules.symbol, /[\W_]/.test(val));
-    toggleRule(rules.noName, name === '' || !val.toLowerCase().includes(name));
   }
 
   function toggleRule(element, condition) {
