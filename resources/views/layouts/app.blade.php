@@ -67,7 +67,7 @@
 
         <ul>
             <li><a href="{{ route('dashboard') }}">Dashboard</a></li>
-            <li><a href="#">Commission</a></li>
+            <li><a href="{{ route('commission.index') }}">Commission</a></li>
             <li><a href="#">Ticket Cancel</a></li>
             <li><a href="#">Bus Ticket</a></li>
             <li><a href="#">Air Ticket</a></li>
