@@ -75,6 +75,8 @@
             <li><a href="#">Expenses</a></li>
             <li><a href="#">Staff</a></li>
             <li><a href="#">Staff Salary</a></li>
+           <li><a href="#">Settings</a></li>
+
 
             <li class="mt-4">
                 <form method="POST" action="{{ route('logout') }}">
