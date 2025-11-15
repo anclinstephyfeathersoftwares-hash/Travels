@@ -49,20 +49,12 @@ class AuthController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        // Send verification email
-        $user->sendEmailVerificationNotification();
-
-        return redirect()->route('login')
-            ->with('success', 'Account created! A verification link has been sent to your email.');
+        return redirect()->route('dashboard')->with('success', 'Registration successful!');
     }
 
     // Handle login
     public function login(Request $request)
     {
-        $request->validate([
-            'email' => 'required|email',
-            'password' => 'required'
-        ]);
 
         $credentials = $request->only('email', 'password');
 
@@ -71,14 +63,7 @@ class AuthController extends Controller
 
         if (!$user) {
             return back()->withErrors([
-                'email' => 'This email is not registered. Please create an account first.',
-            ])->withInput();
-        }
-
-        // Block login if email is not verified
-        if (!$user->email_verified_at) {
-            return back()->withErrors([
-                'email' => 'Please verify your email before logging in.'
+            'email' => 'This email is not registered. Please create an account first.'
             ])->withInput();
         }
 
@@ -88,9 +73,8 @@ class AuthController extends Controller
             return redirect()->route('dashboard');
         }
 
-        return back()->withErrors([
-            'email' => 'Invalid credentials.',
-        ])->withInput();
+       // ✅ If password is wrong
+        return back()->withErrors(['email' => 'Invalid credentials.'])->withInput();
     }
 
     // Handle logout
