@@ -30,10 +30,10 @@ class AuthController extends Controller
             'password' => [
                 'required',
                 'string',
-                'min:5', // Minimum 5 characters
+                'min:5',
                 'confirmed',
-                'regex:/[A-Z]/',   // Must contain at least one uppercase letter
-                'regex:/[\W_]/',   // Must contain at least one special character
+                'regex:/[A-Z]/',
+                'regex:/[\W_]/',
             ],
         ], [
             'password.min' => 'Password must be at least 5 characters long.',
@@ -42,41 +42,55 @@ class AuthController extends Controller
             'password.confirmed' => 'Password confirmation does not match.',
         ]);
 
-        // ✅ Create user and insert into DB
+        // Create user but DO NOT log in
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
 
-        // ✅ Login automatically
-        Auth::login($user);
+        // Send verification email
+        $user->sendEmailVerificationNotification();
 
-        return redirect()->route('dashboard')->with('success', 'Registration successful!');
+        return redirect()->route('login')
+            ->with('success', 'Account created! A verification link has been sent to your email.');
     }
 
     // Handle login
     public function login(Request $request)
     {
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required'
+        ]);
+
         $credentials = $request->only('email', 'password');
 
-        // ✅ Check if the email exists
+        // Check if user exists
         $user = User::where('email', $request->email)->first();
 
         if (!$user) {
             return back()->withErrors([
-                'email' => 'This email is not registered. Please create an account first.'
+                'email' => 'This email is not registered. Please create an account first.',
             ])->withInput();
         }
 
-        // ✅ Attempt login
+        // Block login if email is not verified
+        if (!$user->email_verified_at) {
+            return back()->withErrors([
+                'email' => 'Please verify your email before logging in.'
+            ])->withInput();
+        }
+
+        // Attempt login
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
             return redirect()->route('dashboard');
         }
 
-        // ✅ If password is wrong
-        return back()->withErrors(['email' => 'Invalid credentials.'])->withInput();
+        return back()->withErrors([
+            'email' => 'Invalid credentials.',
+        ])->withInput();
     }
 
     // Handle logout
@@ -85,6 +99,7 @@ class AuthController extends Controller
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
+        
         return redirect('/login');
     }
 }
