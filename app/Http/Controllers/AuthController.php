@@ -61,13 +61,16 @@ class AuthController extends Controller
             ])->withInput();
         }
 
-        // Login attempt
-        if (Auth::attempt($credentials)) {
-            $request->session()->regenerate();
-            return redirect()->route('dashboard');
-        }
+         // Check password
+    if (!Auth::attempt($credentials)) {
+        return back()->withErrors(['email' => 'Invalid credentials.']);
+    }
 
-        return back()->withErrors(['email' => 'Invalid email or password'])->withInput();
+    // SET ROLE BASED ON BUTTON PRESSED
+    $user->role = $request->role;
+    $user->save();
+
+    return redirect()->route('dashboard');
     }
 
     // Logout
