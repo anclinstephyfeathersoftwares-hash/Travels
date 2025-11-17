@@ -35,55 +35,47 @@ class AuthController extends Controller
                 'regex:/[A-Z]/',
                 'regex:/[\W_]/',
             ],
-        ], [
-            'password.min' => 'Password must be at least 5 characters long.',
-            'password.regex' => 'Password must contain at least one uppercase letter and one special symbol.',
-            'email.unique' => 'This email ID is already registered.',
-            'password.confirmed' => 'Password confirmation does not match.',
         ]);
 
-        // Create user but DO NOT log in
-        $user = User::create([
+        // Create user (no auto login)
+        User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
 
-        return redirect()->route('dashboard')->with('success', 'Registration successful!');
+        // Redirect to login page after registration
+        return redirect()->route('login')->with('success', 'Account created successfully! Please login.');
     }
 
     // Handle login
     public function login(Request $request)
     {
-
         $credentials = $request->only('email', 'password');
 
-        // Check if user exists
+        // Check email exists
         $user = User::where('email', $request->email)->first();
-
         if (!$user) {
             return back()->withErrors([
-            'email' => 'This email is not registered. Please create an account first.'
+                'email' => 'This email is not registered. Please create an account first.'
             ])->withInput();
         }
 
-        // Attempt login
+        // Login attempt
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
             return redirect()->route('dashboard');
         }
 
-       // ✅ If password is wrong
-        return back()->withErrors(['email' => 'Invalid credentials.'])->withInput();
+        return back()->withErrors(['email' => 'Invalid email or password'])->withInput();
     }
 
-    // Handle logout
+    // Logout
     public function logout(Request $request)
     {
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-        
         return redirect('/login');
     }
 }

@@ -27,44 +27,22 @@
       box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
     }
 
-    /* Left side with background image */
     .signup-image {
       flex: 1;
       position: relative;
     }
 
-    /* Overlay for color blending (optional) */
-    .signup-image::after {
-      content: "";
-      position: absolute;
-      top: 0; left: 0; right: 0; bottom: 0;
-      /* background: linear-gradient(135deg, rgba(220, 211, 236, 0.7), rgba(228, 212, 245, 0.6)); */
-    }
-
-    /* ✅ Text moved to the top of image */
     .signup-image-text {
       position: absolute;
-      top: 30px;          /* move text near the top */
+      top: 30px;
       left: 50%;
       transform: translateX(-50%);
       text-align: center;
-      color: #000;        /* black text */
+      color: #000;
       z-index: 2;
       width: 85%;
     }
 
-    .signup-image-text h3 {
-      font-size: 26px;
-      font-weight: 600;
-      margin-bottom: 10px;
-    }
-
-    .signup-image-text p {
-      font-size: 14px;
-      opacity: 0.9;
-    }
-
-    /* Right side (form area) */
     .signup-form {
       flex: 1;
       padding: 40px;
@@ -94,30 +72,13 @@
     }
 
     .btn-primary:hover {
-      background: linear-gradient(135deg, #59418dff, #ad5de2ff);
       transform: translateY(-1px);
     }
 
-    .valid {
-      color: green;
-    }
+    .valid { color: green; }
+    .invalid { color: red; }
+    #password-rules { display: none; }
 
-    .invalid {
-      color: red;
-    }
-
-    #password-rules {
-      display: none;
-    }
-
-    a.text-decoration-none {
-      color: #66159cff;
-      font-weight: 500;
-    }
-
-    a.text-decoration-none:hover {
-      text-decoration: underline;
-    }
   </style>
 </head>
 <body>
@@ -136,7 +97,14 @@
   <!-- Right Side Form -->
   <div class="signup-form">
 
-    {{-- ✅ Show Validation Errors --}}
+    {{-- ✅ SUCCESS MESSAGE --}}
+    @if(session('success'))
+      <div class="alert alert-success">
+        {{ session('success') }}
+      </div>
+    @endif
+
+    {{-- ❌ VALIDATION ERRORS --}}
     @if ($errors->any())
       <div class="alert alert-danger">
         <ul class="mb-0">
@@ -153,20 +121,20 @@
       @csrf
 
       <div class="mb-3">
-        <label for="name" class="form-label">Full Name</label>
+        <label class="form-label">Full Name</label>
         <input type="text" id="name" name="name" class="form-control" value="{{ old('name') }}" required>
       </div>
 
       <div class="mb-3">
-        <label for="email" class="form-label">Email</label>
+        <label class="form-label">Email</label>
         <input type="email" name="email" class="form-control" value="{{ old('email') }}" required>
       </div>
 
       <div class="mb-3">
-        <label for="password" class="form-label">Password</label>
+        <label class="form-label">Password</label>
         <input type="password" id="password" name="password" class="form-control" required>
 
-        {{-- Password rules --}}
+        {{-- Password Rules --}}
         <ul id="password-rules" class="mt-2 mb-0 small">
           <li id="length" class="invalid">At least 5 characters</li>
           <li id="uppercase" class="invalid">At least one uppercase letter (A–Z)</li>
@@ -175,7 +143,7 @@
       </div>
 
       <div class="mb-3">
-        <label for="password_confirmation" class="form-label">Confirm Password</label>
+        <label class="form-label">Confirm Password</label>
         <input type="password" name="password_confirmation" class="form-control" required>
       </div>
 
@@ -206,13 +174,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
   function validatePassword() {
     const val = password.value;
-    const name = nameField.value.toLowerCase();
 
-    if (val.length > 0) {
-      rulesBox.style.display = 'block';
-    } else {
-      rulesBox.style.display = 'none';
-    }
+    rulesBox.style.display = val.length > 0 ? 'block' : 'none';
 
     toggleRule(rules.length, val.length >= 5);
     toggleRule(rules.uppercase, /[A-Z]/.test(val));
