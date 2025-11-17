@@ -26,8 +26,8 @@
                 <td>{{ $item->receiver }}</td>
                 <td>{{ $item->type }}</td>
                 <td>{{ $item->status }}</td>
-                <td>{{ $item->date }}</td>
-                <td>${{ number_format($item->amount,2) }}</td>
+                <td>{{ \Carbon\Carbon::parse($item->date)->format('d-m-Y') }}</td>
+                <td>₹{{ number_format($item->amount,2) }}</td>
 
                 <td>
                     <a href="{{ route('commission.edit', $item->id) }}" class="btn btn-primary btn-sm">Edit</a>
