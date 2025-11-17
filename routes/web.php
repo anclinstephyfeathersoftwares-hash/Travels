@@ -4,6 +4,8 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CommissionController;
+use App\Http\Controllers\SettingsController;
+
 
 use App\Http\Controllers\CancelRequestController;
 
@@ -48,3 +50,19 @@ Route::middleware(['auth'])->group(function () {
         return view('dashboard');
     })->name('dashboard');
 });
+
+Route::middleware(['auth'])->group(function () {
+
+    Route::get('/settings', [SettingsController::class, 'index'])->name('settings');
+
+    Route::post('/settings/profile', [SettingsController::class, 'updateProfileImage'])->name('settings.profile');
+
+    Route::post('/settings/company', [SettingsController::class, 'updateCompanyImage'])->name('settings.company');
+
+    Route::post('/settings/account', [SettingsController::class, 'updateAccount'])->name('settings.account');
+
+    Route::delete('/settings/delete', [SettingsController::class, 'deleteAccount'])->name('settings.delete');
+
+});
+
+

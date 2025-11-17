@@ -98,14 +98,13 @@
             <li><a href="{{ route('cancel.index') }}"><i class="bi bi-x-octagon"></i> Ticket Cancel</a></li>
             <li><a href="#"><i class="bi bi-bus-front-fill"></i> Bus Ticket</a></li>
             <li><a href="#"><i class="bi bi-airplane-engines"></i> Air Ticket</a></li>
-            <li><a href="#"><i class="bi bi-wallet-fill"></i> Salary</a></li>
             <li><a href="#"><i class="bi bi-receipt-cutoff"></i> Expenses</a></li>
             <li><a href="#"><i class="bi bi-people-fill"></i> Staff</a></li>
             <li><a href="#"><i class="bi bi-cash-stack"></i> Staff Salary</a></li>
-            <li><a href="#"><i class="bi bi-gear-fill"></i> Settings</a></li>
+            <li><a href="{{ route('settings') }}"><i class="bi bi-gear-fill"></i> Settings</a></li>
+
         </ul>
     </div>
-
     <!-- Content -->
     <div class="content-area">
         @yield('content')
