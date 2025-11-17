@@ -95,7 +95,7 @@
         <ul>
             <li><a href="{{ route('dashboard') }}"><i class="bi bi-speedometer"></i> Dashboard</a></li>
             <li><a href="{{ route('commission.index') }}"><i class="bi bi-cash-coin"></i> Commission</a></li>
-            <li><a href="#"><i class="bi bi-x-octagon"></i> Ticket Cancel</a></li>
+            <li><a href="{{ route('cancel.index') }}"><i class="bi bi-x-octagon"></i> Ticket Cancel</a></li>
             <li><a href="#"><i class="bi bi-bus-front-fill"></i> Bus Ticket</a></li>
             <li><a href="#"><i class="bi bi-airplane-engines"></i> Air Ticket</a></li>
             <li><a href="#"><i class="bi bi-wallet-fill"></i> Salary</a></li>
