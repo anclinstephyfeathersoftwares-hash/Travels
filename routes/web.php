@@ -7,6 +7,8 @@ use App\Http\Controllers\CommissionController;
 use App\Http\Controllers\CancelRequestController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\SettingsController;
+use App\Http\Controllers\BusController;
+
 
 
 
@@ -69,5 +71,17 @@ Route::get('/settings', [SettingsController::class, 'index'])->name('settings');
     Route::post('/cancel-request/update/{id}', [CancelRequestController::class, 'update'])->name('cancel.update');
 
     Route::delete('/cancel-request/delete/{id}', [CancelRequestController::class, 'destroy'])->name('cancel.delete');
+
+    
+   // BUS MODULE ROUTES
+Route::get('/bus/search', [BusController::class, 'showSearchForm'])->name('bus.search.form');
+
+Route::post('/bus/search/results', [BusController::class, 'search'])->name('bus.search.results');
+
+Route::get('/bus/book/{schedule}', [BusController::class, 'book'])->name('bus.book');
+
+Route::post('/bus/book/store', [BusController::class, 'storeBooking'])->name('bus.book.store');
+
+Route::get('/bus/ticket/{ref}', [BusController::class, 'ticket'])->name('bus.ticket');
 
 });
