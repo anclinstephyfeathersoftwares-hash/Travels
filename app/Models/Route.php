@@ -12,8 +12,11 @@ class Route extends Model
         'base_fare'
     ];
 
-    public function schedules()
-    {
-        return $this->hasMany(BusSchedule::class);
-    }
+    public function showSearchForm()
+{
+    $routes = \App\Models\Route::all();   // <-- Add this
+
+    return view('bus.search', compact('routes'));
+}
+
 }

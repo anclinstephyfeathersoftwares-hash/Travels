@@ -6,11 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Bus extends Model
 {
-    protected $fillable = [
-        'bus_name',
-        'bus_number',
-        'total_seats'
-    ];
+    protected $casts = ['seat_layout' => 'array'];
+
 
     public function schedules()
     {
