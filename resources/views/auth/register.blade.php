@@ -119,6 +119,14 @@
 
     <form action="{{ route('register.post') }}" method="POST" id="signupForm">
       @csrf
+      <label class="form-label">
+        <span style="color:red">*</span> Select Role
+      </label>
+      <select name="role" class="form-control mb-3" required>
+        <option value="">Admin/Staff</option>
+        <option value="admin">Admin</option>
+        <option value="staff">Staff</option>
+      </select>
 
       <div class="mb-3">
         <label class="form-label">Full Name</label>

@@ -96,6 +96,7 @@
 
         <form method="POST" action="{{ route('login.post') }}">
             @csrf
+       <input type="hidden" name="role" value="{{ request('role') }}">
 
             <div class="mb-3">
                 <label class="form-label">Email Address</label>
