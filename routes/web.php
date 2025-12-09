@@ -65,13 +65,17 @@ Route::middleware(['auth'])->group(function () {
     // -------------------------
     Route::prefix('bus')->group(function () {
 
-        // Search form
-        Route::get('/search', [BusController::class, 'showSearchForm'])->name('bus.search.form');
+        // Search page
+// Bus Search Form Page (required by index.blade)
+Route::get('/bus/search', [BusController::class, 'index'])->name('bus.search.form');
+// If your PassengerController has a create method
+Route::get('/bus/schedule/{schedule_id}/passenger/add', [App\Http\Controllers\BusController::class, 'addPassenger']);
 
-        // Search results (POST)
-        Route::post('/search/results', [BusController::class, 'search'])->name('bus.search.results');
 
-        // AJAX get available buses
+        // 🔥 NEW LINE ADDED (Do NOT modify old code)
+        Route::post('/search', [BusController::class, 'search'])->name('bus.search.post');
+
+        // AJAX: Available bus list
         Route::get('/available', [BusController::class, 'availableByDate'])->name('bus.available');
 
         // Booking page
@@ -85,8 +89,7 @@ Route::middleware(['auth'])->group(function () {
 
         // Ticket PDF
         Route::get('/ticket/{ref}/pdf', [BusController::class, 'ticket'])->name('bus.ticket.pdf');
-        Route::get('/bus/search', [BusController::class, 'searchPage'])->name('bus.search.form');
 
     });
 
-}); // <-- THIS closes the auth middleware group properly
+}); // <-- THIS closes the auth middleware group properly  this is web.php code

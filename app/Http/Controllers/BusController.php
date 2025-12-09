@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\BusSchedule;
 use App\Models\Ticket;
-use App\Models\Route; // <-- IMPORTANT (Routes table/model)
+use App\Models\Route;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Carbon\Carbon;
@@ -13,38 +13,17 @@ use Illuminate\Support\Str;
 class BusController extends Controller
 {
     // ------------------------------------------------------
-    // SHOW SEARCH FORM  (FIXED: now sends $routes)
+    // INDEX PAGE (Live Search + Booked Tickets + Create Passenger)
     // ------------------------------------------------------
-    public function showSearchForm()
+    public function index()
     {
-        $routes = Route::select('from', 'to')->distinct()->get();
+        // Fetch distinct routes from DB or fallback static cities
+        $routes = Route::select('from')->distinct()->pluck('from')->toArray();
 
-        return view('bus.search', compact('routes'));
-    }
+        // Fetch latest tickets for table display
+        $tickets = Ticket::with('schedule.bus', 'schedule.route')->latest()->get();
 
-    // ------------------------------------------------------
-    // SEARCH RESULTS PAGE
-    // ------------------------------------------------------
-    public function search(Request $request)
-    {
-        $request->validate([
-            'from'  => 'required',
-            'to'    => 'required',
-            'date'  => 'required|date'
-        ]);
-
-        $schedules = BusSchedule::with(['bus', 'route'])
-            ->whereDate('travel_date', $request->date)
-            ->whereHas('route', function ($q) use ($request) {
-                $q->where('from', $request->from)
-                  ->where('to', $request->to);
-            })
-            ->get();
-
-        return view('bus.result', [
-            'schedules' => $schedules,
-            'request'   => $request
-        ]);
+        return view('bus.index', compact('routes', 'tickets'));
     }
 
     // ------------------------------------------------------
@@ -69,7 +48,6 @@ class BusController extends Controller
             ->get();
 
         $data = $schedules->map(function ($s) {
-
             $totalSeats = $s->bus->total_seats ?? 0;
             $booked = $s->tickets()->count();
             $available = max(0, $totalSeats - $booked);
@@ -94,50 +72,83 @@ class BusController extends Controller
     }
 
     // ------------------------------------------------------
-    // BOOK PAGE
+    // BOOK PAGE (Detailed Seat Selection)
     // ------------------------------------------------------
     public function book(BusSchedule $schedule)
     {
         $takenSeats = $schedule->tickets()->pluck('seat_no')->toArray();
-
         return view('bus.book', compact('schedule', 'takenSeats'));
     }
 
     // ------------------------------------------------------
-    // STORE BOOKING
+    // STORE PASSENGER DETAILS (Inline Form)
     // ------------------------------------------------------
-    public function storeBooking(Request $request)
+    public function storePassenger(Request $request)
     {
         $request->validate([
-            'schedule_id'      => 'required',
-            'passenger_name'   => 'required',
-            'passenger_phone'  => 'required',
-            'seat_no'          => 'required|numeric'
+            'name'      => 'required|string|max:255',
+            'age_gender'=> 'nullable|string|max:50',
+            'mobile'    => 'required|string|max:20',
+            'boarding'  => 'required|string|max:255',
+            'dropping'  => 'required|string|max:255',
         ]);
 
-        $schedule = BusSchedule::findOrFail($request->schedule_id);
-
-        if ($schedule->tickets()->where('seat_no', $request->seat_no)->exists()) {
-            return back()->withErrors(['seat_no' => 'Seat already booked!']);
-        }
-
-        $ref = 'TKT-' . strtoupper(Str::random(8));
-        $fare = $schedule->route->base_fare;
-
-        Ticket::create([
-            'schedule_id'       => $schedule->id,
-            'passenger_name'    => $request->passenger_name,
-            'passenger_phone'   => $request->passenger_phone,
-            'seat_no'           => $request->seat_no,
-            'fare'              => $fare,
-            'booking_reference' => $ref
+        // Save passenger as ticket (schedule & seat can be assigned later)
+        $ticket = Ticket::create([
+            'passenger_name' => $request->name,
+            'passenger_phone'=> $request->mobile,
+            'seat_no'        => null,
+            'schedule_id'    => null,
+            'fare'           => 0,
+            'booking_reference' => 'TKT-' . strtoupper(Str::random(8)),
+            'boarding_point' => $request->boarding,
+            'dropping_point' => $request->dropping,
         ]);
 
-        return redirect()->route('bus.ticket', $ref);
+        return redirect()->back()->with('success', 'Passenger details saved successfully!');
     }
 
     // ------------------------------------------------------
-    // SHOW TICKET
+    // SEARCH FORM (Optional if needed for separate search page)
+    // ------------------------------------------------------
+    public function searchPage()
+    {
+        // Static cities for live search dropdown
+        $routes = [
+            'Chennai', 'Bangalore', 'Hyderabad', 'Mumbai', 'Delhi',
+            'Pune', 'Kolkata', 'Coimbatore', 'Madurai', 'Trichy'
+        ];
+
+        return view('bus.create', compact('routes'));
+    }
+
+    // ------------------------------------------------------
+    // SEARCH RESULTS PAGE (Form submission)
+    // ------------------------------------------------------
+    public function search(Request $request)
+    {
+        $request->validate([
+            'from' => 'required',
+            'to'   => 'required',
+            'date' => 'required|date',
+        ]);
+
+        $schedules = BusSchedule::with(['bus', 'route'])
+            ->whereDate('travel_date', $request->date)
+            ->whereHas('route', function ($q) use ($request) {
+                $q->where('from', $request->from)
+                  ->where('to', $request->to);
+            })
+            ->get();
+
+        return view('bus.result', [
+            'schedules' => $schedules,
+            'request'   => $request,
+        ]);
+    }
+
+    // ------------------------------------------------------
+    // SHOW TICKET BY REFERENCE
     // ------------------------------------------------------
     public function ticket($ref)
     {
@@ -147,15 +158,4 @@ class BusController extends Controller
 
         return view('bus.ticket', compact('ticket'));
     }
-    public function searchPage()
-{
-    // India cities list (static for now)
-    $routes = [
-        'Chennai', 'Bangalore', 'Hyderabad', 'Mumbai', 'Delhi',
-        'Pune', 'Kolkata', 'Coimbatore', 'Madurai', 'Trichy'
-    ];
-
-    return view('bus.search', compact('routes'));
-}
-
 }
