@@ -101,7 +101,7 @@
             <li><a href="#"><i class="bi bi-receipt-cutoff"></i> Expenses</a></li>
             <li><a href="#"><i class="bi bi-people-fill"></i> Staff</a></li>
             <li><a href="#"><i class="bi bi-cash-stack"></i> Staff Salary</a></li>
-            <li><a href="{{ route('settings') }}"><i class="bi bi-gear-fill"></i> Settings</a></li>
+            <li><a href="{{ route('settings.index') }}"><i class="bi bi-gear-fill"></i> Settings</a></li>
 
         </ul>
     </div>

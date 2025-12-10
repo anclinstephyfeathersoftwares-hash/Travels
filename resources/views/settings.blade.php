@@ -25,7 +25,7 @@
         <hr>
 
         {{-- Logo --}}
-<form action="{{ route('settings.company') }}" method="POST" enctype="multipart/form-data">
+        <form action="{{ route('settings.companyLogo') }}" method="POST" enctype="multipart/form-data">
             @csrf
 
             <label class="form-label">Logo</label><br>
@@ -38,6 +38,40 @@
 
             <input type="file" name="company_image" class="form-control" onchange="loadLogo(event)">
             <button class="btn btn-warning w-100 mt-2">Update Logo</button>
+        </form>
+
+        <hr>
+
+        {{-- Company Details --}}
+        <form action="{{ route('settings.companyDetails') }}" method="POST">
+            @csrf
+
+            <h5 class="mt-3">Company Details</h5>
+
+            <label class="form-label">Company Name</label>
+            <input type="text" name="company_name" class="form-control"
+                value="{{ auth()->user()->company_name }}">
+
+            <label class="form-label mt-2">Address</label>
+            <textarea name="company_address" class="form-control" rows="2">{{ auth()->user()->company_address }}</textarea>
+
+            <label class="form-label mt-2">Phone Number</label>
+            <input type="text" name="company_phone" class="form-control"
+                value="{{ auth()->user()->company_phone }}">
+
+            <label class="form-label mt-2">Currency (INR / USD etc.)</label>
+            <input type="text" name="currency" class="form-control"
+                value="{{ auth()->user()->currency ?? 'INR' }}">
+
+            <label class="form-label mt-2">Website (optional)</label>
+            <input type="text" name="company_website" class="form-control"
+                value="{{ auth()->user()->company_website }}">
+
+            <label class="form-label mt-2">Email (optional)</label>
+            <input type="email" name="company_email" class="form-control"
+                value="{{ auth()->user()->company_email }}">
+
+            <button class="btn btn-info w-100 mt-3">Save Company Details</button>
         </form>
 
         <hr>
@@ -65,7 +99,6 @@
                 Delete Account
             </button>
         </form>
-
     </div>
 </div>
 

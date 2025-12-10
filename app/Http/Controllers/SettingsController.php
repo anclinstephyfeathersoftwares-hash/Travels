@@ -64,7 +64,6 @@ class SettingsController extends Controller
 
         return back()->with('success', 'Company image updated successfully!');
     }
-
     /**
      * Update Account Username + Password
      */
@@ -87,6 +86,36 @@ class SettingsController extends Controller
 
         return back()->with('success', 'Account updated!');
     }
+
+public function updateCompanyDetails(Request $request)
+{
+    // Validate data (optional)
+    $request->validate([
+        'company_name' => 'nullable|string|max:255',
+        'company_address' => 'nullable|string',
+        'company_phone' => 'nullable|string|max:20',
+        'company_email' => 'nullable|email',
+        'company_website' => 'nullable|string',
+        'currency' => 'nullable|string',
+    ]);
+
+    // Fetch the first row (or create default)
+    $company = \App\Models\Company::first() ?? new \App\Models\Company();
+
+    $company->company_name = $request->company_name;
+    $company->company_address = $request->company_address;
+    $company->company_phone = $request->company_phone;
+    $company->company_email = $request->company_email;
+    $company->company_website = $request->company_website;
+    $company->currency = $request->currency ?? 'INR';
+
+    $company->save();
+
+    return back()->with('success', 'Company details updated successfully');
+}
+
+
+
 
     /**
      * Delete User Account

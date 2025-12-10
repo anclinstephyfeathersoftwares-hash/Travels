@@ -39,11 +39,29 @@ Route::middleware(['auth'])->group(function () {
     })->name('dashboard');
 
     // Settings
-    Route::get('/settings', [SettingsController::class, 'index'])->name('settings');
-    Route::post('/settings/profile', [SettingsController::class, 'updateProfileImage'])->name('settings.profile');
-    Route::post('/settings/company', [SettingsController::class, 'updateCompanyImage'])->name('settings.company');
-    Route::post('/settings/account', [SettingsController::class, 'updateAccount'])->name('settings.account');
-    Route::delete('/settings/delete', [SettingsController::class, 'deleteAccount'])->name('settings.delete');
+       // Settings main page
+    Route::get('/settings', [SettingsController::class, 'index'])->name('settings.index');
+
+    // Update profile image
+    Route::post('/settings/profile', [SettingsController::class, 'updateProfileImage'])
+        ->name('settings.profile');
+
+    // Update company logo
+    Route::post('/settings/company-logo', [SettingsController::class, 'updateCompanyImage'])
+        ->name('settings.companyLogo');
+
+    // Update company details
+    Route::post('/settings/company-details', [SettingsController::class, 'updateCompanyDetails'])
+        ->name('settings.companyDetails');
+
+    // Update username + password
+    Route::post('/settings/account', [SettingsController::class, 'updateAccount'])
+        ->name('settings.account');
+
+    // Delete account
+    Route::delete('/settings/delete', [SettingsController::class, 'deleteAccount'])
+        ->name('settings.delete');
+
 
     // Commission
     Route::get('/commission', [CommissionController::class, 'index'])->name('commission.index');
@@ -66,10 +84,10 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('bus')->group(function () {
 
         // Search page
-// Bus Search Form Page (required by index.blade)
-Route::get('/bus/search', [BusController::class, 'index'])->name('bus.search.form');
-// If your PassengerController has a create method
-Route::get('/bus/schedule/{schedule_id}/passenger/add', [App\Http\Controllers\BusController::class, 'addPassenger']);
+        // Bus Search Form Page (required by index.blade)
+        Route::get('/bus/search', [BusController::class, 'index'])->name('bus.search.form');
+        // If your PassengerController has a create method
+        Route::get('/bus/schedule/{schedule_id}/passenger/add', [App\Http\Controllers\BusController::class, 'addPassenger']);
 
 
         // 🔥 NEW LINE ADDED (Do NOT modify old code)
@@ -89,7 +107,5 @@ Route::get('/bus/schedule/{schedule_id}/passenger/add', [App\Http\Controllers\Bu
 
         // Ticket PDF
         Route::get('/ticket/{ref}/pdf', [BusController::class, 'ticket'])->name('bus.ticket.pdf');
-
     });
-
 }); // <-- THIS closes the auth middleware group properly  this is web.php code
