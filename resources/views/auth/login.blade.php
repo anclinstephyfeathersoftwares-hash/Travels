@@ -33,7 +33,7 @@
 
         h3 {
             text-align: center;
-            color: #3a0ca3;
+            color: #bdb7c9ff;
             margin-bottom: 25px;
             font-weight: 700;
         }

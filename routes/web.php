@@ -79,33 +79,29 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/cancel-request/delete/{id}', [CancelRequestController::class, 'destroy'])->name('cancel.delete');
 
     // -------------------------
-    // BUS MODULE ROUTES
-    // -------------------------
-    Route::prefix('bus')->group(function () {
+// BUS MODULE ROUTES
+// -------------------------
+Route::prefix('bus')->group(function () {
 
-        // Search page
-        // Bus Search Form Page (required by index.blade)
-        Route::get('/bus/search', [BusController::class, 'index'])->name('bus.search.form');
-        // If your PassengerController has a create method
-        Route::get('/bus/schedule/{schedule_id}/passenger/add', [App\Http\Controllers\BusController::class, 'addPassenger']);
+    // Existing routes
+    Route::get('/search', [BusController::class, 'index'])->name('bus.search.form');
+    Route::post('/search', [BusController::class, 'search'])->name('bus.search.post');
+    Route::get('/bus/passenger/add-global', [BusController::class, 'createPassengerGlobal'])->name('passenger.add_global');
 
 
-        // 🔥 NEW LINE ADDED (Do NOT modify old code)
-        Route::post('/search', [BusController::class, 'search'])->name('bus.search.post');
+    Route::get('/bus/add', [BusController::class, 'createPassengerGlobal'])->name('passenger.create.global');
+    Route::post('/passenger/store', [BusController::class, 'storePassenger'])->name('passenger.store');
 
-        // AJAX: Available bus list
-        Route::get('/available', [BusController::class, 'availableByDate'])->name('bus.available');
+    Route::get('/available', [BusController::class, 'availableByDate'])->name('bus.available');
 
-        // Booking page
-        Route::get('/schedule/{schedule}/book', [BusController::class, 'book'])->name('bus.book');
+    Route::get('/schedule/{schedule}/book', [BusController::class, 'book'])->name('bus.book');
+    Route::post('/booking/store', [BusController::class, 'storeBooking'])->name('bus.storeBooking');
 
-        // Store booking
-        Route::post('/booking/store', [BusController::class, 'storeBooking'])->name('bus.storeBooking');
+    Route::get('/ticket/{ref}/pdf', [BusController::class, 'ticketPdf'])->name('bus.ticket.pdf');
+    Route::get('/ticket/{ref}', [BusController::class, 'ticket'])->name('bus.ticket');
 
-        // Ticket
-        Route::get('/ticket/{ref}', [BusController::class, 'ticket'])->name('bus.ticket');
+    // ✅ NEW GLOBAL ADD PASSENGER ROUTE
+    Route::get('/add', [BusController::class, 'createPassengerGlobal'])->name('passenger.create.global');
+});
 
-        // Ticket PDF
-        Route::get('/ticket/{ref}/pdf', [BusController::class, 'ticket'])->name('bus.ticket.pdf');
-    });
-}); // <-- THIS closes the auth middleware group properly  this is web.php code
+});// <-- crucial closing brace and parenthesis
