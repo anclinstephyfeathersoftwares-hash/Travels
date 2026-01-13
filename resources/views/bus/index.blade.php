@@ -10,7 +10,8 @@
     box-shadow: 0 4px 12px rgba(0,0,0,0.08);
 }
 .search-dropdown{position:relative;}
-.search-dropdown input {width:100%;padding:8px;}
+.search-dropdown input {width:100%;padding:8px;}li
+
 .search-dropdown ul {
     position:absolute;width:100%;max-height:180px;overflow-y:auto;
     background:white;border:1px solid #ddd;border-radius:4px;
